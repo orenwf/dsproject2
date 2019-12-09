@@ -15,65 +15,10 @@ def getCorpus(path=inputFile):
     return corpus
 
 
-def makeDocumentDictionary(listofwords):
-    d = {}
-    for word in listofwords:
-        if word in d:
-            d[word] += 1
-        else:
-            d[word] = 1
-    return d
-
-
-def dictionaryReducer(left, right):
-    for key in right:
-        if key in left:
-            left[key] |= right[key]
-        else:
-            left[key] = right[key]
-    return left
-
-
-def getSimilarity(pairs):
-    num = sum(x*y for x, y in pairs)
-    denom = sqrt(sum(x**2 for x, y in pairs)
-                 ) * sqrt(sum(y**2 for x, y in pairs))
-    return num/denom
-
-
-def term_term_similarity(term1, term2, tfidf, index):
-    termdocs = tfidf.filter(
-        lambda x: x[0] in index[term1] or x[0] in index[term2])
-    idfpairs = termdocs.map(
-        lambda x: (
-            x[2][term1] if term1 in x[2] else 0,
-            x[2][term2] if term2 in x[2] else 0))
-    numerator = idfpairs.map(lambda x: x[0]*x[1]).reduce(lambda x, y: x+y)
-    denomleftterm = sqrt(idfpairs.map(
-        lambda x: x[0]**2).reduce(lambda x, y: x+y))
-    denomrightterm = sqrt(idfpairs.map(
-        lambda x: x[1]**2).reduce(lambda x, y: x+y))
-    return numerator/denomleftterm/denomrightterm
-
-
-def term_corpus_similarity(queryterm, tfidf, index):
-    table = {}
-    for other in index.keys() - {queryterm}:
-        sim = term_term_similarity(queryterm, other, tfidf, index)
-        table[other] = sim
-    return table
-#    return sorted(table.items(), key=lambda x: x[1])
-#    return spark.sparkContext.parallelize(
-#        table.items()).map(
-#        lambda x: (x[1],
-#                   x[0])).sortByKey().map(
-#        lambda y: (queryterm, y[1],
-#                   y[0]))
-
-
-def all_terms_similarity():
-    tfidf, index = getTfidfFrame()
-    return {k: term_term_similarity(k, tfidf, index) for k in index.keys()}
+def tfidf2similarity(d1, d2):
+    return sum([val * d2[doc] for doc, val in d1.items() if doc in d2]) / (
+        sqrt(sum([val ** 2 for val in d1.values()])) *
+        sqrt(sum([val ** 2 for val in d2.values()])))
 
 
 def terms2freq(total, words):
@@ -83,7 +28,37 @@ def terms2freq(total, words):
             d[word] += 1
         else:
             d[word] = 1
-    return ((word, count/total) for word, count in d.items())
+    return [(word, count/total) for word, count in d.items()]
+
+
+def getSimilarityMatrix(tfidf):
+    matrix = tfidf.cartesian(tfidf).map(
+        lambda x: (
+            tfidf2similarity(
+                x[0][1], x[1][1]), (x[0][0], x[1][0]))).sortByKey(
+                ascending=False).map(
+                    lambda x: (
+                         x[1][0], (x[1][1], x[0]))).groupByKey()
+    return matrix.map(lambda x: (x[0], dict(x[1])))
+
+
+def simrank(word, matrix):
+    res = matrix.lookup(word)
+    if res:
+        return {term: sim for term, sim in res[0].items() if sim > 0}
+    else:
+        return None
+
+
+def getDocKwFreqFrame():
+    corpus = getCorpus()
+    doclengths = corpus.map(lambda x: (*x, len(x[1])))
+    dockwonly = doclengths.map(
+        lambda x: (
+            x[0], x[2], [
+                word for word in x[1] if 'gene_' in word and '_gene' in word or 'dis_' in word and '_dis' in word]))
+    # get frequencies of words in doc
+    return dockwonly.map(lambda x: (x[0], terms2freq(x[1], x[2])))
 
 
 def getTfidfFrame():
@@ -97,10 +72,10 @@ def getTfidfFrame():
             x[0], x[2], [
                 word for word in x[1] if 'gene_' in word and '_gene' in word or 'dis_' in word and '_dis' in word]))
     # get frequencies of words in doc
-    dockwfreqs = dockwonly.map(lambda x: (x[0], *terms2freq(x[1], x[2])))
+    dockwfreqs = dockwonly.map(lambda x: (x[0], terms2freq(x[1], x[2])))
     # get docs and freq for each word
     kwdocfreqs = dockwfreqs.flatMap(
-        lambda x: [(word, (x[0], freq)) for word, freq in x[1:]]).groupByKey()
+        lambda x: [(word, (x[0], freq)) for word, freq in x[1]]).groupByKey()
     # get idfs
     kwidfs = kwdocfreqs.map(lambda x: (x[0], log(doccount/len(x[1])), x[1]))
     # get tfidfs
