@@ -1,3 +1,5 @@
+import argparse
+from pprint import pprint, pformat
 from pyspark.sql import SparkSession
 from math import log, sqrt
 
@@ -15,6 +17,8 @@ def getCorpus(path=inputFile):
     return corpus
 
 
+# returns a similarity score for two terms
+# d1, d2 are dicts of documentId where a term appears: tfidf in that doc
 def tfidf2similarity(d1, d2):
     return sum([val * d2[doc] for doc, val in d1.items() if doc in d2]) / (
         sqrt(sum([val ** 2 for val in d1.values()])) *
@@ -32,26 +36,26 @@ def terms2freq(total, words):
 
 
 def getSimilarityMatrix(tfidf):
-    matrix = tfidf.cartesian(tfidf).map(
+    return tfidf.cartesian(tfidf).map(
         lambda x: (
-            tfidf2similarity(
-                x[0][1], x[1][1]), (x[0][0], x[1][0]))).sortByKey(
-                ascending=False).map(
-                    lambda x: (
-                         x[1][0], (x[1][1], x[0]))).groupByKey()
-    return matrix.map(lambda x: (x[0], dict(x[1])))
+            x[0][0], (x[1][0],
+                      tfidf2similarity(
+                x[0][1], x[1][1])))).groupByKey().map(lambda x: (x[0], dict(x[1])))
 
 
 def simrank(word, matrix):
     res = matrix.lookup(word)
     if res:
-        return {term: sim for term, sim in res[0].items() if sim > 0}
+        similar_terms = spark.sparkContext.parallelize(
+            list(res[0].items())).map(lambda x: (x[1], x[0]))
+        ranked_terms = similar_terms.filter(lambda x: x[0] > 0).sortByKey(
+            ascending=False)
+        return ranked_terms.map(lambda x: (x[1], x[0])).collect()
     else:
         return None
 
 
-def getDocKwFreqFrame():
-    corpus = getCorpus()
+def getDocKwFreqFrame(corpus):
     doclengths = corpus.map(lambda x: (*x, len(x[1])))
     dockwonly = doclengths.map(
         lambda x: (
@@ -61,8 +65,7 @@ def getDocKwFreqFrame():
     return dockwonly.map(lambda x: (x[0], terms2freq(x[1], x[2])))
 
 
-def getTfidfFrame():
-    corpus = getCorpus()
+def getTfidfFrame(corpus):
     doccount = corpus.count()
     # get sizes of each document
     doclengths = corpus.map(lambda x: (*x, len(x[1])))
@@ -83,3 +86,36 @@ def getTfidfFrame():
         lambda x: (
             x[0], {
                 docid: x[1]*freq for docid, freq in x[2]}))
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        description='Similarity score tool using map-reduce on spark.')
+    parser.add_argument(
+        'corpus', metavar='CORPUS', help='The file path of the corpus to use.')
+    parser.add_argument(
+        'terms', metavar='TERM', nargs='*', help='Some terms to search for.')
+    parser.add_argument(
+        '--table', help='Dump the entire similarity score table.')
+    args = parser.parse_args()
+
+    filepath = args.corpus
+    corpus = getCorpus(filepath)
+    tfidf = getTfidfFrame(corpus)
+    matrix = getSimilarityMatrix(tfidf)
+    terms = args.terms
+
+    if not terms:
+        terms += input('Please enter a search term: ')
+    while(terms):
+        term = terms.pop(0)
+        res = simrank(term, matrix)
+        if res:
+            pprint(res)
+        else:
+            pprint('No term matching {} has been found.'.format(term))
+        next_term = input('Please enter a search term: ')
+        if next_term:
+            terms.append(next_term)
+
+    print('Goodbye!')
