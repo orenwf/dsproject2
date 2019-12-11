@@ -8,7 +8,7 @@ spark = SparkSession.builder.getOrCreate()
 
 
 def getCorpus(path=inputFile):
-    rawcorpus = spark.sparkContext.textFile(inputFile)
+    rawcorpus = spark.sparkContext.textFile(path)
     corpus = rawcorpus.map(
         lambda toStrip: toStrip.strip()).map(
         lambda toSplit: toSplit.split()).map(
