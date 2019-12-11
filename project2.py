@@ -94,7 +94,7 @@ if __name__ == '__main__':
     parser.add_argument(
         'corpus', metavar='CORPUS', help='The file path of the corpus to use.')
     parser.add_argument(
-        'terms', metavar='TERM', nargs='*', help='Some terms to search for.')
+        'terms', metavar='TERM', nargs='+', help='Some terms to search for.')
     parser.add_argument(
         '--table', help='Dump the entire similarity score table.')
     args = parser.parse_args()
@@ -105,17 +105,15 @@ if __name__ == '__main__':
     matrix = getSimilarityMatrix(tfidf)
     terms = args.terms
 
-    if not terms:
-        terms += input('Please enter a search term: ')
+    rdict = {}
+
     while(terms):
         term = terms.pop(0)
         res = simrank(term, matrix)
         if res:
-            pprint(res)
+            rdict[term]=res
         else:
-            pprint('No term matching {} has been found.'.format(term))
-        next_term = input('Please enter a search term: ')
-        if next_term:
-            terms.append(next_term)
+            rdict[term]='No term matching {} has been found.'.format(term)
 
+    pprint(rdict)
     print('Goodbye!')
