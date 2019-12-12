@@ -1,5 +1,6 @@
 import argparse
 from pprint import pprint, pformat
+from pyspark.context import SparkContext
 from pyspark.sql import SparkSession
 from math import log, sqrt
 
@@ -7,14 +8,15 @@ inputFile = '/home/oren/Downloads/project2_test.txt'
 spark = SparkSession.builder.getOrCreate()
 
 
-def getCorpus(path=inputFile):
-    rawcorpus = spark.sparkContext.textFile(path)
-    corpus = rawcorpus.map(
-        lambda toStrip: toStrip.strip()).map(
-        lambda toSplit: toSplit.split()).map(
-        lambda toPart: (toPart[0],
-                        toPart[1:]))
-    return corpus
+def get_corpus(path=inputFile):
+    with open(path, 'r') as f:
+        rawcorpus = spark.sparkContext.parallelize(f.readlines())
+        corpus = rawcorpus.map(
+            lambda toStrip: toStrip.strip()).map(
+            lambda toSplit: toSplit.split()).map(
+            lambda toPart: (toPart[0],
+                            toPart[1:]))
+        return corpus
 
 
 # returns a similarity score for two terms
@@ -35,7 +37,7 @@ def terms2freq(total, words):
     return [(word, count/total) for word, count in d.items()]
 
 
-def getSimilarityMatrix(tfidf):
+def get_similarity_matrix(tfidf):
     return tfidf.cartesian(tfidf).map(
         lambda x: (
             x[0][0], (x[1][0],
@@ -65,7 +67,7 @@ def getDocKwFreqFrame(corpus):
     return dockwonly.map(lambda x: (x[0], terms2freq(x[1], x[2])))
 
 
-def getTfidfFrame(corpus):
+def get_tfidf(corpus):
     doccount = corpus.count()
     # get sizes of each document
     doclengths = corpus.map(lambda x: (*x, len(x[1])))
@@ -100,9 +102,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     filepath = args.corpus
-    corpus = getCorpus(filepath)
-    tfidf = getTfidfFrame(corpus)
-    matrix = getSimilarityMatrix(tfidf)
+    corpus = get_corpus(filepath)
+    tfidf = get_tfidf(corpus)
+    matrix = get_similarity_matrix(tfidf)
     terms = args.terms
 
     rdict = {}
@@ -111,9 +113,10 @@ if __name__ == '__main__':
         term = terms.pop(0)
         res = simrank(term, matrix)
         if res:
-            rdict[term]=res
+            rdict[term] = res
         else:
-            rdict[term]='No term matching {} has been found.'.format(term)
+            rdict[term] = 'No term matching {} has been found.'.format(term)
 
-    pprint(rdict)
-    print('Goodbye!')
+    with open('mapreduce.result', 'w') as f:
+        f.write(pformat(rdict))
+        f.write('\n')
