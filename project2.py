@@ -4,11 +4,11 @@ from pyspark.context import SparkContext
 from pyspark.sql import SparkSession
 from math import log, sqrt
 
-inputFile = '/home/oren/Downloads/project2_test.txt'
 spark = SparkSession.builder.getOrCreate()
+RESULT_FILE_NAME_ROOT = 'mapreduce.result'
 
 
-def get_corpus(path=inputFile):
+def get_corpus(path):
     with open(path, 'r') as f:
         rawcorpus = spark.sparkContext.parallelize(f.readlines())
         corpus = rawcorpus.map(
@@ -52,19 +52,9 @@ def simrank(word, matrix):
             list(res[0].items())).map(lambda x: (x[1], x[0]))
         ranked_terms = similar_terms.filter(lambda x: x[0] > 0).sortByKey(
             ascending=False)
-        return ranked_terms.map(lambda x: (x[1], x[0])).collect()
+        return ranked_terms.map(lambda x: (x[1], x[0]))
     else:
         return None
-
-
-def getDocKwFreqFrame(corpus):
-    doclengths = corpus.map(lambda x: (*x, len(x[1])))
-    dockwonly = doclengths.map(
-        lambda x: (
-            x[0], x[2], [
-                word for word in x[1] if 'gene_' in word and '_gene' in word or 'dis_' in word and '_dis' in word]))
-    # get frequencies of words in doc
-    return dockwonly.map(lambda x: (x[0], terms2freq(x[1], x[2])))
 
 
 def get_tfidf(corpus):
@@ -99,9 +89,17 @@ if __name__ == '__main__':
         'terms', metavar='TERM', nargs='+', help='Some terms to search for.')
     parser.add_argument(
         '--table', help='Dump the entire similarity score table.')
+    parser.add_argument(
+        '--max',
+        metavar='M',
+        type=int,
+        nargs='?',
+        help='Maximum rank to display',
+        default=5)
     args = parser.parse_args()
 
     filepath = args.corpus
+    filename = filepath.split('/')[-1]
     corpus = get_corpus(filepath)
     tfidf = get_tfidf(corpus)
     matrix = get_similarity_matrix(tfidf)
@@ -113,10 +111,20 @@ if __name__ == '__main__':
         term = terms.pop(0)
         res = simrank(term, matrix)
         if res:
-            rdict[term] = res
+            rdict[term] = res.filter(lambda x: x[0] != term).collect()
         else:
-            rdict[term] = 'No term matching {} has been found.'.format(term)
+            rdict[term] = None
 
-    with open('mapreduce.result', 'w') as f:
-        f.write(pformat(rdict))
+    with open('{}.{}'.format(RESULT_FILE_NAME_ROOT, filename), 'w') as f:
+        f.write('CSCI 795 \t Big Data Seminar \t Oren Friedman \t Project 2\n')
+        f.write('{}\n'.format('='*128))
+        for word, result in rdict.items():
+            if result is None:
+                f.write('No term similar to {} has been found.'.format(word))
+            else:
+                f.write('FOUND\t{}\n'.format(word))
+                f.write('{:<8}{:64}{:<}\n'.format('RANK', 'TERM', 'COSINE SIMILARITY'))
+                for rank, pair in enumerate(result[:args.max], start=1):
+                    f.write('{:<8}{:64}{:<}\n'.format(rank, pair[0], pair[1]))
+            f.write('{}\n'.format('='*128))
         f.write('\n')
