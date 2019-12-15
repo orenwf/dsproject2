@@ -1,6 +1,6 @@
 import argparse
-from pprint import pprint, pformat
-from pyspark.context import SparkContext
+import re
+from pprint import pformat
 from pyspark.sql import SparkSession
 from math import log, sqrt
 
@@ -20,11 +20,12 @@ def get_corpus(path):
 
 
 # returns a similarity score for two terms
-# d1, d2 are dicts of documentId where a term appears: tfidf in that doc
-def tfidf2similarity(d1, d2):
-    return sum([val * d2[doc] for doc, val in d1.items() if doc in d2]) / (
-        sqrt(sum([val ** 2 for val in d1.values()])) *
-        sqrt(sum([val ** 2 for val in d2.values()])))
+# term1, term2 are dicts of documentId where a term appears: tfidf in that doc
+def tfidf2similarity(term1, term2):
+    numerator = sum([tfidf * term2[doc] for doc, tfidf in term1.items() if doc in term2])
+    leftdenom = sqrt(sum([tfidf ** 2 for tfidf in term1.values()]))
+    rightdenom = sqrt(sum([tfidf ** 2 for tfidf in term2.values()]))
+    return numerator / (leftdenom * rightdenom)
 
 
 def terms2freq(total, words):
@@ -46,26 +47,28 @@ def get_similarity_matrix(tfidf):
 
 
 def simrank(word, matrix):
-    res = matrix.lookup(word)
-    if res:
-        similar_terms = spark.sparkContext.parallelize(
-            list(res[0].items())).map(lambda x: (x[1], x[0]))
-        ranked_terms = similar_terms.filter(lambda x: x[0] > 0).sortByKey(
-            ascending=False)
-        return ranked_terms.map(lambda x: (x[1], x[0]))
-    else:
-        return None
+    similar_terms = matrix.filter(
+        lambda x: x[0] == word).flatMap(
+        lambda x: [
+            (word, simscore) for word, simscore in x[1].items()]).map(
+                lambda x: (
+                    x[1], x[0]))
+    ranked_terms = similar_terms.filter(lambda x: x[0] > 0).sortByKey(
+        ascending=False)
+    return ranked_terms.map(lambda x: (x[1], x[0]))
 
 
-def get_tfidf(corpus):
+def get_tfidf(corpus, regex):
     doccount = corpus.count()
     # get sizes of each document
     doclengths = corpus.map(lambda x: (*x, len(x[1])))
     # get keywords we care about only
     dockwonly = doclengths.map(
         lambda x: (
-            x[0], x[2], [
-                word for word in x[1] if 'gene_' in word and '_gene' in word or 'dis_' in word and '_dis' in word]))
+            x[0], x[2], x[1])) if regex is None else doclengths.map(
+            lambda x: (
+                x[0], x[2], [
+                     word for word in x[1] if regex.search(word)]))
     # get frequencies of words in doc
     dockwfreqs = dockwonly.map(lambda x: (x[0], terms2freq(x[1], x[2])))
     # get docs and freq for each word
@@ -88,42 +91,101 @@ if __name__ == '__main__':
     parser.add_argument(
         'terms', metavar='TERM', nargs='+', help='Some terms to search for.')
     parser.add_argument(
-        '--table', help='Dump the entire similarity score table.')
+        '--table',
+        action='store_true',
+        help='Dump the entire similarity score table.')
+    parser.add_argument(
+        '--test',
+        action='store_true',
+        help='Test the mapreduce operation against serial operation.')
+    parser.add_argument(
+        '--nofilter',
+        action='store_true',
+        help='Generate similarty matrix without filtering.')
+    parser.add_argument(
+        '--filter',
+        type=str,
+        default='.*dis_.*_dis.*|.*gene_.*_gene.*',
+        help='Filter the terms that go into the similarity matrix.')
+    parser.add_argument(
+        '--search',
+        nargs=1,
+        type=str,
+        help='Search and rank only matching terms.')
     parser.add_argument(
         '--max',
         metavar='M',
         type=int,
         nargs='?',
-        help='Maximum rank to display',
+        help='Maximum rank to display.',
         default=5)
     args = parser.parse_args()
 
+    regex = None if args.nofilter else re.compile(
+        args.filter)
     filepath = args.corpus
     filename = filepath.split('/')[-1]
     corpus = get_corpus(filepath)
-    tfidf = get_tfidf(corpus)
+    tfidf = get_tfidf(corpus, regex)
     matrix = get_similarity_matrix(tfidf)
+    matrix.cache()
     terms = args.terms
 
-    rdict = {}
+    # sanity check to test against a single threaded python app
+    if args.test:
+        from similarityscoretests import test
+        similarityscores = test(filepath)
+        p2matrix = dict(matrix.collect())
 
+        for term1 in similarityscores:
+            for term2 in similarityscores[term1]:
+                if abs(p2matrix[term1][term2] - similarityscores[term1]
+                       [term2]) > 0.0000001:
+                    print(
+                        'TEST:{}:{}:{} not equal to MR:{}'.format(
+                            term1,
+                            term2,
+                            similarityscores[term1][term2],
+                            p2matrix[term1][term2]))
+            else:
+                print('TEST PASSED')
+
+    # can attempt to dump entire similarity matrix for introspection
+    if args.table:
+        dump = dict(matrix.collect())
+        with open('MATRIX_DUMP.{}'.format(filename), 'w') as f:
+            f.write(pformat(dump))
+            f.write('\n')
+
+    # otherwise proceed to pretty file output for lookup results
+    rdict = {}
     while(terms):
         term = terms.pop(0)
-        res = simrank(term, matrix)
-        if res:
-            rdict[term] = res.filter(lambda x: x[0] != term).collect()
-        else:
-            rdict[term] = None
+        searchresult = simrank(
+            term, matrix).filter(
+                # filter out the word itself from the search rankings
+                lambda x: x[0] != term)
+        # if we have asked for result filtering for only certain regex, do it
+        if args.search:
+            searchresult = searchresult.filter(
+                lambda x: re.compile(
+                    args.search[0]).search(
+                    x[0]))
+        rdict[term] = searchresult.collect()
 
     with open('{}.{}'.format(RESULT_FILE_NAME_ROOT, filename), 'w') as f:
         f.write('CSCI 795 \t Big Data Seminar \t Oren Friedman \t Project 2\n')
         f.write('{}\n'.format('='*128))
         for word, result in rdict.items():
-            if result is None:
-                f.write('No term similar to {} has been found.'.format(word))
+            if not result:
+                f.write('No term similar to {} has been found.\n'.format(word))
             else:
                 f.write('FOUND\t{}\n'.format(word))
-                f.write('{:<8}{:64}{:<}\n'.format('RANK', 'TERM', 'COSINE SIMILARITY'))
+                f.write(
+                    '{:<8}{:64}{:<}\n'.format(
+                        'RANK',
+                        'TERM',
+                        'COSINE SIMILARITY'))
                 for rank, pair in enumerate(result[:args.max], start=1):
                     f.write('{:<8}{:64}{:<}\n'.format(rank, pair[0], pair[1]))
             f.write('{}\n'.format('='*128))

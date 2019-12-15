@@ -1,0 +1,600 @@
+sudo apt update
+apt upgrade
+apt install default-jdk
+wget https://www.apache.org/dyn/closer.cgi/hadoop/common/hadoop-2.9.2/hadoop-2.9.2.tar.gz
+ls -lal
+tar xzvf hadoop-2.9.2.tar.gz 
+tar xvf hadoop-2.9.2.tar.gz 
+rm hadoop-2.9.2.tar.gz 
+wget http://apache-mirror.8birdsvideo.com/hadoop/common/hadoop-2.10.0/hadoop-2.10.0.tar.gz
+vim setup
+tar xzvf hadoop-2.10.0.t
+tar xzvf hadoop-2.10.0.tar.gz hadoop-2.10.0
+ls
+mv hadoop-2.10.0 /usr/local/
+vim setup 
+mv /usr/local/hadoop-2.10.0/ /usr/local/hadoop
+/usr/local/hadoop/bin/hadoop
+export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")
+echo $JAVA_HOME 
+/usr/local/hadoop/bin/hadoop
+echo 'export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")' >> setup 
+cat setup 
+vim setup 
+git
+wget http://apache-mirror.8birdsvideo.com/spark/spark-3.0.0-preview/spark-3.0.0-preview-bin-hadoop3.2.tgz
+tar xzvf spark-3.0.0-preview-bin-hadoop3.2.tgz 
+ls
+mv spark-3.0.0-preview-bin-hadoop3.2 /usr/local/spark
+/usr/local/spark/bin/run-example 
+/usr/local/spark/bin/spark-shell
+/usr/local/spark/sbin/spark-config.sh 
+/usr/local/spark/sbin/start-master.sh 
+ls
+/usr/local/spark/sbin/stop-master.sh 
+cd /usr/local/spark/
+ls
+cd conf/
+ls
+mkdir slaves
+rm -r slaves
+cp slaves.template slaves
+vim slaves
+ls
+cd -
+cd ~
+ls
+rm hadoop-2.10.0.tar.gz 
+rm /usr/local/hadoop/
+rm -r /usr/local/hadoop/
+vim setup 
+echo 'wget http://apache-mirror.8birdsvideo.com/spark/spark-3.0.0-preview/spark-3.0.0-preview-bin-hadoop3.2.tgz' >> setup
+vim setup 
+ssh-keygen 
+ls
+echo .ssh/id_rsa.pub 
+cat .ssh/id_rsa.pub 
+systemctl reboot
+scp --help
+scp setup root@64.225.6.93:setup
+scp setup root@64.225.6.59:setup
+scp setup root@64.225.6.57:setup
+vim setup 
+scp setup root@64.225.6.59:setup
+scp setup root@64.225.6.57:setup
+scp setup root@64.225.6.93:setup
+echo 'export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")' >> .bashrc
+source .bashrc 
+echo $JAVA_HOME 
+ls
+vim setup 
+apt update -y
+apt update --help
+apt --help
+apt --help update
+vim setup 
+/usr/local/spark/sbin/start-all.sh 
+/usr/local/spark/bin/pyspark 
+cat /usr/local/spark/bin/pyspark
+/usr/local/spark/python/run-tests.py 
+/usr/local/spark/bin/pyspark 
+apt search python3
+python3 -V
+/usr/local/spark/bin/pyspark 
+python -V
+echo 'alias python=python3' >> .bashrc 
+source .bashrc
+python -V
+/usr/local/spark/bin/pyspark 
+cat /usr/local/spark/bin/pyspark
+/usr/local/spark/bin/pyspark 
+vim /usr/local/spark/bin/pyspark
+python
+export PYSPARK_PYTHON=python3
+vim /usr/local/spark/bin/pyspark
+/usr/local/spark/bin/pyspark 
+ls
+echo $JAVA_HOME 
+/usr/local/spark/bin/spark-submit --help
+/usr/local/spark/bin/spark-submit project2.py 
+vim .bashrc
+source .bashrc 
+/usr/local/spark/bin/spark-submit project2.py 
+/usr/local/spark/bin/spark-submit project2.py --help
+/usr/local/spark/sbin/start-slaves.sh 
+/usr/local/spark/bin/spark-submit project2.py --help
+/usr/local/spark/sbin/start-all.sh 
+/usr/local/spark/bin/spark-submit project2.py project2_test.txt
+vim project2.py 
+/usr/local/spark/bin/spark-submit project2.py project2_test.txt
+/usr/local/spark/bin/spark-submit project2.py project2_test.txt dis_papilloma_dis
+/usr/local/spark/sbin/start-slaves.sh $(ip) 
+ip
+hostname
+hostname -I
+/usr/local/spark/sbin/start-slaves.sh spark://64.225.6.56:7077
+/usr/local/spark/bin/spark-submit project2.py project2_test.txt dis_papilloma_dis
+/usr/local/spark/sbin/start-slaves.sh http://64.225.6.56:7077
+jps
+/usr/local/spark/sbin/start-all.sh 
+/usr/local/spark/sbin/stop-slaves.sh 
+/usr/local/spark/sbin/start-slave.sh 64.225.6.56
+jps
+/usr/local/spark/sbin/start-slaves.sh 64.225.6.56
+/usr/local/spark/sbin/start-master.sh -h 64.225.6.56
+/usr/local/spark/sbin/stop-all.sh 
+/usr/local/spark/sbin/start-master.sh -h 64.225.6.56
+/usr/local/spark/sbin/start-slaves.sh 64.225.6.56
+jps
+/usr/local/spark/sbin/stop-master.sh
+vim /usr/local/spark/conf/slaves
+/usr/local/spark/sbin/start-master.sh 
+/usr/local/spark/sbin/stop-master.sh
+jps
+/usr/local/spark/sbin/start-master.sh 64.225.6.56
+jps
+/usr/local/spark/sbin/start-master.sh
+jps
+cat /usr/local/spark/conf/spark-env.sh.template 
+cp /usr/local/spark/conf/spark-env.sh.template /usr/local/spark/conf/spark-env.sh
+vim /usr/local/spark/conf/spark-env.sh
+jps
+/usr/local/spark/sbin/stop-master.sh
+vim /usr/local/spark/conf/spark-env.sh
+/usr/local/spark/sbin/stop-master.sh
+/usr/local/spark/sbin/start-master.sh
+jps
+scp /usr/local/spark/conf/spark-env.sh 64.225.6.57:/usr/local/spark/conf/spark-env.sh
+scp /usr/local/spark/conf/spark-env.sh 64.225.6.59:/usr/local/spark/conf/spark-env.sh
+scp /usr/local/spark/conf/spark-env.sh 64.225.6.93:/usr/local/spark/conf/spark-env.sh
+vim /usr/local/spark/conf/spark-env.sh
+jps
+/usr/local/spark/sbin/stop-master.sh 
+jps
+/usr/local/spark/sbin/start-master.sh 
+cat /usr/local/spark/logs/spark-root-org.apache.spark.deploy.master.Master-1-ubuntu-s-1vcpu-1gb-nyc3-01.out
+/usr/local/spark/sbin/start-all.sh 
+cat /usr/local/spark/logs/spark-root-org.apache.spark.deploy.master.Master-1-ubuntu-s-1vcpu-1gb-nyc3-01.out
+cat /usr/local/spark/logs/spark-root-org.apache.spark.deploy.worker.Worker-1-ubuntu-s-1vcpu-1gb-nyc3-01.out 
+ls
+vim /etc/hosts
+vim /usr/local/spark/conf/spark-env.sh
+cp /usr/local/spark/conf/spark-env.sh.template /usr/local/spark/conf/spark-env.sh
+vim /usr/local/spark/conf/spark-env.sh
+/usr/local/spark/sbin/stop-master.sh 
+jps
+/usr/local/spark/sbin/start-master.sh 
+/usr/local/spark/bin/spark-submit project2.py project2_test.txt dis_papilloma_dis
+/usr/local/spark/bin/spark-shell 
+/usr/local/spark/bin/pyspark 
+/usr/local/spark/bin/pyspark --master spark://64.225.6.56:7077
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt dis_papilloma_dis
+python project2.py 
+python3 project2.py 
+python3 -m pip
+apt install python3-pip
+/usr/local/spark/bin/pyspark --master spark://64.225.6.56:7077
+/usr/local/spark/bin/pyspark --master spark://64.225.6.56:7077 project2.py project2_test.txt dis_papilloma_dis
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt dis_papilloma_dis
+python3 project2.py 
+pip3 install pyspark
+systemctl poweroff 
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt dis_papilloma_dis
+/usr/local/spark/sbin/start-master.sh 
+pip3 install pyspark
+python3
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt dis_papilloma_dis
+/usr/local/spark/examples/src/main/python/sort.py 
+cat /usr/local/spark/examples/src/main/python/sort.py 
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt dis_papilloma_dis
+cat project2.py 
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt dis_papilloma_dis
+/usr/local/spark/sbin/start-slave.sh --master spark://64.225.6.56:7077
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt dis_papilloma_dis -p 3
+systemctl poweroff 
+/usr/local/spark/sbin/start-master.sh 
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt dis_papilloma_dis
+vim /usr/local/spark/conf/spark-env.sh
+/usr/local/spark/bin/spark-submit --host spark://64.225.6.56:7077 project2.py project2_test.txt dis_papilloma_dis
+vim /usr/local/spark/conf/spark-env.sh
+/usr/local/spark/bin/spark-submit --host spark://64.225.6.56:7077 project2.py project2_test.txt dis_papilloma_dis
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt dis_papilloma_dis
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 --num-executors 4 project2.py project2_test.txt dis_papilloma_dis
+ls
+vim /etc/hosts
+vim /etc/cloud/templates/hosts.debian.tmpl 
+vim ~/.ssh/authorized_keys 
+cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys 
+cat ~/.ssh/authorized_keys 
+vim /usr/local/spark/conf/spark-env.sh
+/usr/local/spark/bin/spark-shell 
+/usr/local/spark/bin/spark-shell --master MASTER-SPARK
+/usr/local/spark/bin/spark-shell --master 64.225.6.56
+/usr/local/spark/bin/spark-shell --master spark://64.225.6.56
+/usr/local/spark/sbin/start-master.sh 
+/usr/local/spark/bin/spark-shell --master spark://org.apache.spark.SparkException: Invalid master URL: spark://64.225.6.56
+/usr/local/spark/bin/spark-shell --master spark://64.225.6.56
+vim /usr/local/spark/sbin/stop-master.sh 
+/usr/local/spark/sbin/stop-master.sh 
+/usr/local/spark/sbin/start-master.sh 
+/usr/local/spark/bin/spark-shell --master spark://64.225.6.56:7077
+/usr/local/spark/bin/pyspark --master spark://64.225.6.56:7077
+ls
+pwd
+/usr/local/spark/bin/pyspark --master spark://64.225.6.56:7077
+/usr/local/spark/bin/pyspark --master spark://64.225.6.56:7077 --total-executor-cores 6
+/usr/local/spark/bin/pyspark --master spark://64.225.6.56:7077 --client --total-executor-cores 6
+vim /usr/local/spark/conf/spark-env.sh
+scp /usr/local/spark/conf/spark-env.sh root@64.225.6.57:/usr/local/spark/conf/spark-env.sh
+scp /usr/local/spark/conf/spark-env.sh root@64.225.6.59:/usr/local/spark/conf/spark-env.sh
+scp /usr/local/spark/conf/spark-env.sh root@64.225.6.93:/usr/local/spark/conf/spark-env.sh
+vim /usr/local/spark/conf/spark-env.sh
+/usr/local/spark/sbin/stop-all.sh 
+/usr/local/spark/sbin/start-all.sh 
+/usr/local/spark/bin/pyspark
+/usr/local/spark/bin/pyspark --master spark://64.225.6.56:7077
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt dis_papilloma_dis
+hostname -I
+vim /usr/local/spark/conf/spark-env.sh
+scp /usr/local/spark/conf/spark-env.sh root@64.225.6.57:/usr/local/spark/conf/spark-env.sh
+scp /usr/local/spark/conf/spark-env.sh root@64.225.6.59:/usr/local/spark/conf/spark-env.sh
+scp /usr/local/spark/conf/spark-env.sh root@64.225.6.93:/usr/local/spark/conf/spark-env.sh
+/usr/local/spark/sbin/stop-all.sh 
+/usr/local/spark/sbin/start-all.sh 
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt dis_papilloma_dis
+rm /usr/local/spark/logs/*
+/usr/local/spark/sbin/stop-all.sh 
+/usr/local/spark/sbin/start-all.sh 
+vim /usr/local/spark/conf/spark-env.sh
+/usr/local/spark/bin/spark-submit --client --master spark://64.225.6.56:7077 project2.py project2_test.txt dis_papilloma_dis
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt dis_papilloma_dis
+vim /usr/local/spark/conf/spark-env.sh
+/usr/local/spark/sbin/stop-all.sh 
+/usr/local/spark/sbin/start-all.sh 
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt dis_papilloma_dis
+ls
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py < project2_test.txt dis_papilloma_dis
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt dis_papilloma_dis
+ls
+cat mapreduce.result 
+/usr/local/spark/bin/spark-submit project2.py project2_test.txt dis_papilloma_dis
+cat mapreduce.result 
+/usr/local/spark/bin/pyspark project2.py project2_test.txt dis_papilloma_dis
+/usr/local/spark/bin/pyspark
+/usr/local/spark/bin/spark-submit project2.py project2_test.txt dis_papilloma_dis
+ls
+cat mapreduce.result 
+rm mapreduce.result 
+cat mapreduce.result 
+/usr/local/spark/bin/spark-submit project2.py project2_test.txt dis_papilloma_dis
+ls
+/usr/local/spark/bin/spark-submit project2.py project2_test.txt dis_papilloma_dis
+ls
+/usr/local/spark/bin/spark-submit project2.py project2_test.txt
+/usr/local/spark/bin/spark-submit project2.py project2_test.txt dis_papilloma_dis
+/usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10
+ls
+cat mapreduce.result.project2_test.txt 
+ls
+vim setup 
+echo $PATH
+PATH = /usr/local/spark/:$PATH
+export PATH = /usr/local/spark/:$PATH
+vim setup 
+export PATH=/usr/local/spark/:$PATH
+echo $PATH 
+ls
+mv setup setup_spark.sh
+cp setup_spark.sh config_worker.sh
+vim config_worker.sh 
+ls /usr/local/spark/conf/spark-env.sh
+ls -lal /usr/local/spark/conf/spark-env.sh
+vim config_worker.sh 
+ls
+rm config_worker.sh 
+ls
+hostname -I
+echo $(hostname -I)
+echo $(hostname -I) > hostname
+cat hostname 
+hostname -I | tr ' '
+tr --help
+hostname --help
+hostname
+hostname -i
+hostname -d
+hostname -I
+hostname -I | tr ' ' ''
+sed --help
+hostname -I | awk '{print $0}'
+hostname -I | awk '{print $01}'
+hostname -I | awk '{$01}'
+hostname -I | awk '{print $01}'
+echo $(hostname -I | awk '{print $01}')
+echo $(hostname -I | awk '{print $01}') > file
+ls
+cat file 
+echo "$(hostname -I | awk '{print $01}')stuff" > file
+cat file 
+ls
+rm file 
+cat hostname 
+rm hostname 
+ls
+vim /usr/local/spark/conf/spark-env.sh
+/usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10
+ls
+rm mapreduce.result.project2_test.txt 
+ls
+/usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10
+cat mapreduce.result.project2_test.txt 
+ls
+time(/usr/local/spark/bin/spark-submit project2.py --nofilter project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10)
+time(/usr/local/spark/bin/spark-submit project2.py project2_test.txt --nofilter gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10)
+ls
+cat mapreduce.result.project2_test.txt 
+time(/usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10)
+cat mapreduce.result.project2_test.txt 
+/usr/local/spark/sbin/stop-all.sh 
+/usr/local/spark/sbin/start-all.sh 
+/usr/local/spark/sbin/stop-all.sh 
+apt update
+apt upgrade
+systemctl reboot 
+/usr/local/spark/sbin/start-all.sh 
+time(/usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10)
+time(/usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10) >> test.3
+cat test.3 
+echo time(/usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10) >> test.3
+time --help
+time -h
+echo "time(/usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10)" >> test.3
+cat test.3 
+test.3 << time(/usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10)
+
+
+ls
+/usr/bin/time -o test.3 /usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10
+ls
+cat test.3 
+{ /usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10; } 2> test.3
+cat test.3 
+(time /usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10) >/dev/null 2> test.3
+cat test.3 
+rm test.3 
+(time /usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10) >/dev/null 2> test.3
+cat test.3 
+rm test.3 
+(time /usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10) > logging 2> test.3
+cat test.3 
+{ /usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 1 2> logging; } 2> test.3
+{ /usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 2> logging; } 2> test.3
+cat test.3 
+{ time /usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10) 2> test.3
+cat test.3 
+time ls
+{ time /usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2> test.3
+cat test.3 
+{ time /usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2> test.3
+cat test.3 
+{ time /usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> test.3
+cat test.3 
+{ time /usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> test.3
+cat test.3 
+{ time /usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> test.3
+cat test.3 
+cat /usr/local/spark/sbin/stop-slave.sh 
+{ time /usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> test.2
+cat test.2
+{ time /usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> test.2
+cat test.2
+{ time /usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> test.1
+ls
+cat mapreduce.result.project2_test.txt 
+cat test.1
+{ time /usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> test.1
+cat test.1
+cat test.2
+{ time /usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> test.0
+ls
+cat test.0
+ls
+rm mapreduce.result.project2_test.txt 
+ls
+{ time /usr/local/spark/bin/spark-submit project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> test.0
+ls
+cat mapreduce.result.project2_test.txt 
+/usr/local/spark/sbin/start-slaves.sh 
+/usr/local/spark/bin/spark-submit project2.py project2_test.txt --nofilter gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10
+ls
+cat mapreduce.result.project2_test.txt 
+{ time /usr/local/spark/bin/spark-submit project2.py project2_test.txt --nofilter gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> testnofilter.3
+ls
+cat testnofilter.3 
+/usr/local/spark/sbin/stop-slaves.sh 
+{ time /usr/local/spark/bin/spark-submit project2.py project2_test.txt --nofilter gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> testnofilter.0
+cat testnofilter.0
+/usr/local/spark/sbin/start-slaves.sh 
+{ time /usr/local/spark/bin/spark-submit --deploy-mode cluster project2.py project2_test.txt --nofilter gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> testnofilter.3
+cat testnofilter.3
+ls
+cat mapreduce.result.project2_test.txt 
+{ time /usr/local/spark/bin/spark-submit --deploy-mode cluster project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> testnofilter.3
+cat testnofilter.3
+cat mapreduce.result.project2_test.txt 
+ls
+cat mapreduce.result.project2_test.txt 
+rm mapreduce.result.project2_test.txt 
+{ time /usr/local/spark/bin/spark-submit --deploy-mode cluster project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> test.3
+ls
+/usr/local/spark/bin/spark-submit project2.py project2_test.txt --deploy-mode cluster gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10
+/usr/local/spark/bin/spark-submit --deploy-mode cluster project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 --deploy-mode cluster project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10
+ls
+cat mapreduce.result.project2_test.txt 
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt --nofilter gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10
+cat mapreduce.result.project2_test.txt 
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10
+cat mapreduce.result.project2_test.txt 
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10
+cat mapreduce.result.project2_test.txt 
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 --nofilter
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt --nofilter --max 10 gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis
+ls
+cat mapreduce.result.project2_test.txt 
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt --nofilter --max 10 gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis
+cat mapreduce.result.project2_test.txt 
+ls
+rm test.3 test.2 test.1 testnofilter.3
+ls
+rm mapreduce.result.project2_test.txt
+ls
+rm logging 
+cat .ssh/id_rsa.pub 
+ls
+cat setup_spark.sh 
+cat /etc/hosts
+vim /etc/cloud/templates/hosts.debian.tmpl 
+scp setup_spark.sh root@167.172.252.234:setup_spark.sh
+systemctl reboot 
+ssh root@167.172.252.234
+/usr/local/spark/sbin/stop-all.sh 
+scp /usr/local/spark/conf/spark-env.sh root@167.172.252.234:/usr/local/spark/conf/spark-env.sh
+/usr/local/spark/sbin/start-all.sh 
+ssh root@167.172.252.234
+ssh root@64.225.6.57
+cat /etc/hosts
+cat /etc/cloud/templates/hosts.debian.tmpl 
+vim /usr/local/spark/conf/slaves
+/usr/local/spark/sbin/stop-all.sh 
+/usr/local/spark/sbin/start-all.sh 
+ls
+cat setup_spark.sh 
+vim setup_worker.sh
+ls
+cat setup_spark.sh 
+vim setup_worker.sh 
+vim setup_spark.sh 
+ls -lal
+ls
+chmod +x setup_worker.sh
+ls
+vim setup_worker.sh 
+ls /usr/local/spark/conf/spark-env.sh
+./setup_worker.sh 142.93.66.176
+ssh-copy-id --help
+ssh -h
+ssh-copy-id root@142.93.66.176
+cat .ssh/id_rsa.pub 
+vim setup_worker.sh 
+./setup_worker.sh 142.93.66.176
+echo /usr/local/spark/conf/slaves
+cat /usr/local/spark/conf/slaves
+vim setup_worker.sh 
+./setup_worker.sh 142.93.66.176
+cat /usr/local/spark/conf/slaves
+vim /usr/local/spark/conf/slaves
+vim setup_worker.sh 
+./setup_worker.sh 142.93.66.176
+ls
+/usr/local/spark/sbin/start-all.sh 
+vim /usr/local/spark/conf/slaves
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt gene_egfr+_gene
+ls
+cat mapreduce.result.project2_test.txt 
+vim setup_master.sh
+cat /etc/hosts
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt gene_egfr+_gene
+ls
+rm mapreduce.result.project2_test.txt 
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt gene_egfr+_gene
+cat mapreduce.result.project2_test.txt 
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt gene_egfr+_gene --filtersearch .*dis_.*_dis.*
+cat mapreduce.result.project2_test.txt 
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py --help
+ls
+/usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt --nofilter gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10
+ls
+cat mapreduce.result.project2_test.txt 
+rm mapreduce.result.project2_test.txt 
+{ time /usr/local/spark/bin/spark-submit project2.py project2_test.txt --nofilter gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> testnofilter.6
+ls
+cat  testnofilter.6
+cat mapreduce.result.project2_test.txt 
+{ time /usr/local/spark/bin/spark-submit project2.py project2_test.txt --nofilter gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> testnofilter.6
+ls
+cat testnofilter.6
+cat /usr/local/spark/conf/slaves
+/usr/local/spark/sbin/stop-slave.sh 142.93.66.176
+ssh 142.93.66.176
+ls
+{ time /usr/local/spark/bin/spark-submit project2.py project2_test.txt --nofilter gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> testnofilter.5
+ls
+cat testnofilter.5
+{ time /usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt --nofilter gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> testnofilter.5
+cat testnofilter.5
+ssh 142.93.66.176
+/usr/local/spark/sbin/start-slaves.sh 
+{ time /usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt --nofilter gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2> testnofilter.6
+cat .ssh/id_rsa.pub 
+ls
+./setup_worker.sh 167.172.239.14
+./setup_worker.sh 167.71.81.192
+/usr/local/spark/sbin/start-all.sh 
+ls
+rm testnofilter.5 testnofilter.6
+ls
+cat test.0
+rm test.0
+rm testnofilter.0 
+ls
+{ time /usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 project2.py project2_test.txt --nofilter gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2> testnofilter.8
+cat testnofilter.8 
+{ time /usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 --executor-memory 4G project2.py project2_test.txt --nofilter gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2> testnofilter.8
+cat testnofilter.8 
+{ time /usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 --executor-memory 4G project2.py project2_test.txt --nofilter gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> testnofilter.8
+{ time /usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 --executor-memory 2G --executor-cores 1 project2.py project2_test.txt --nofilter gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> testnofilter.8
+cat testnofilter.8 
+{ time /usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 --executor-memory 2G project2.py project2_test.txt --nofilter gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2> testnofilter.8
+cat testnofilter.8 
+/usr/local/spark/sbin/stop-all.sh 
+/usr/local/spark/sbin/start-all.sh 
+ls
+rm testnofilter.8 
+{ time /usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 --executor-memory 2G project2.py project2_test.txt --nofilter gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2> testnofilter.8
+{ time /usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 --executor-memory 2G project2.py project2_test.txt --nofilter gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> testnofilter.8
+cat testnofilter.8 
+{ time /usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 --executor-memory 2G project2.py project2_test.txt --nofilter gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> testnofilter.8
+cat /usr/local/spark/conf/slaves
+ssh 64.225.6.57
+ssh 64.225.6.59
+cat /usr/local/spark/conf/slaves
+ssh 64.225.6.93
+ssh 167.71.81.192
+{ time /usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 --executor-memory 2G project2.py project2_test.txt --nofilter gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> testnofilter.4
+cat testnofilter.4
+cat testnofilter.8
+{ time /usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 --executor-memory 2G project2.py project2_test.txt --nofilter gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> testnofilter.4
+cat testnofilter.4
+ssh 167.172.252.234
+ssh 167.172.239.14
+{ time /usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 --executor-memory 2G project2.py project2_test.txt --nofilter gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> testnofilter.2
+ssh 142.93.66.176
+{ time /usr/local/spark/bin/spark-submit --master spark://64.225.6.56:7077 --executor-memory 2G project2.py project2_test.txt --nofilter gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2>> testnofilter.1
+ls
+cat setup_worker.sh 
+cat /usr/local/spark/conf/slaves
+ls
+mkdir scripts
+cp --help
+cp setup_master.sh setup_worker.sh setup_spark.sh scripts/
+ls
+ls scripts/
+mkdir testdata
+cp testnofilter.* testdata/
+ls testdata/
+cat setup_master.sh 
+cat setup_worker.sh 
+vim /usr/local/spark/conf/slaves
+vim .bash_history 
