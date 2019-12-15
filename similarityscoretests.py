@@ -1,5 +1,6 @@
 import re
 from math import log, sqrt
+from project2 import *
 
 
 def test(filepath):
@@ -69,3 +70,30 @@ def test(filepath):
         similarityscores[word1] = w1dict
 
     return similarityscores
+
+
+if __name__ == '__main__':
+    args = parse_cli()
+
+    filepath = args.corpus
+    filename = filepath.split('/')[-1]
+
+    corpus = get_corpus(filepath)
+    frequencies = get_frequencies(corpus, None)
+    idf_table = get_idf_table(get_id_index(frequencies), corpus.count())
+    matrix = get_similarity_matrix(get_tfidf_table(idf_table))
+    p2matrix = dict(matrix.collect())
+
+    similarityscores = test(filepath)
+    for term1 in similarityscores:
+        for term2 in similarityscores[term1]:
+            if abs(p2matrix[term1][term2] - similarityscores[term1]
+                    [term2]) > 0.0000001:
+                print(
+                    'TEST:{}:{}:{} not equal to MR:{}'.format(
+                        term1,
+                        term2,
+                        similarityscores[term1][term2],
+                        p2matrix[term1][term2]))
+        else:
+            print('TEST PASSED')
