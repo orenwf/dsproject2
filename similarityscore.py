@@ -97,31 +97,6 @@ def get_tfidf_table(input_table):
         word[0], {docId: word[1]*tf for docId, tf in word[2].items()}))
 
 
-def get_tfidf(corpus, regex):
-    doccount = corpus.count()
-    # get sizes of each document
-    doclengths = corpus.map(lambda x: (*x, len(x[1])))
-    # get keywords we care about only
-    dockwonly = doclengths.map(
-        lambda x: (
-            x[0], x[2], x[1])) if regex is None else doclengths.map(
-            lambda x: (
-                x[0], x[2], [
-                     word for word in x[1] if regex.search(word)]))
-    # get frequencies of words in doc
-    dockwfreqs = dockwonly.map(lambda x: (x[0], terms2freq(x[1], x[2])))
-    # get docs and freq for each word
-    kwdocfreqs = dockwfreqs.flatMap(
-        lambda x: [(word, (x[0], freq)) for word, freq in x[1]]).groupByKey()
-    # get idfs
-    kwidfs = kwdocfreqs.map(lambda x: (x[0], log(doccount/len(x[1])), x[1]))
-    # get tfidfs
-    return kwidfs.map(
-        lambda x: (
-            x[0], {
-                docid: x[1]*freq for docid, freq in x[2]}))
-
-
 # runs the lookups and ranks the similarities for a list of lookup terms
 def run_queries(terms, matrix, args):
     rdict = {}
