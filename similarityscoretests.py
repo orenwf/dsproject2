@@ -1,54 +1,52 @@
-import re
-from math import log, sqrt
 from project2 import *
 
 
-def test(filepath):
+def get_test_data(filepath, args):
     f = open(filepath)
     lines = f.readlines()
     f.close()
 
-    words = [line.split() for line in lines]
+    lines = [line.strip().split() for line in lines]
+    assert lines, "@@@@@@@@@@@@@@@         NO INPUT          @@@@@@@@@@@@@@@@@"
 
-    matches = {}
-    for line in words:
-        for word in line:
-            if re.compile(
-                    '.*dis_.*_dis.*').match(word) or re.compile('.*gene_.*_gene.*').match(word):
+    corpus = [(line[0], line[1:]) for line in lines]
+
+    regex = None if args.nofilter else re.compile(args.filter)
+    frequencies = {}
+    for docid, text in corpus:
+        matches = {}
+        for word in text:
+            if regex is None or regex.search(word):
                 if word in matches:
                     matches[word] += 1
                 else:
                     matches[word] = 1
+        frequencies[docid] = {
+            word: total/len(text) for word, total in matches.items()}
 
-    corpus = {line[0]: line[1:] for line in words}
-
-    frequencies = {}
-    for line in words:
-        dict = {}
-        for word in line:
-            if re.compile(
-                    '.*dis_.*_dis.*').match(word) or re.compile('.*gene_.*_gene.*').match(word):
-                if word in dict:
-                    dict[word] += 1
-                else:
-                    dict[word] = 1
-        frequencies[line[0]] = {
-            word: total/len(corpus[line[0]]) for word, total in dict.items()}
+    assert len(
+        frequencies) > 1, "@@@@@@@@@@@@@@@         NO INPUT          @@@@@@@@@@@@@@@@@"
 
     inverseindex = {}
-    for docid, dict in frequencies.items():
-        for word in dict:
+    for docid, matches in frequencies.items():
+        for word in matches:
             if word in inverseindex:
                 inverseindex[word].append(docid)
             else:
                 inverseindex[word] = [docid]
+    assert len(
+        inverseindex) > 1, "@@@@@@@@@@@@@@@         NO INPUT          @@@@@@@@@@@@@@@@@"
+
     tfidf = {}
     for word in inverseindex:
-        idf = log(100/len(inverseindex[word]))
+        idf = log(len(corpus)/len(inverseindex[word]))
         doctfidf = {}
         for doc in inverseindex[word]:
             doctfidf[doc] = frequencies[doc][word]*idf
         tfidf[word] = doctfidf
+
+    assert len(
+        tfidf) > 1, "@@@@@@@@@@@@@@@         NO INPUT          @@@@@@@@@@@@@@@@@"
 
     similarityscores = {}
 
@@ -69,6 +67,9 @@ def test(filepath):
                 w1dict[word2] = sim
         similarityscores[word1] = w1dict
 
+    assert len(
+        similarityscores) > 1, "@@@@@@@@@@@@@@@         NO INPUT          @@@@@@@@@@@@@@@@@"
+
     return similarityscores
 
 
@@ -77,23 +78,25 @@ if __name__ == '__main__':
 
     filepath = args.corpus
     filename = filepath.split('/')[-1]
-
     corpus = get_corpus(filepath)
-    frequencies = get_frequencies(corpus, None)
+    frequencies = get_frequencies(
+        corpus, None if args.nofilter else re.compile(
+            args.filter), args.original_doc_len)
     idf_table = get_idf_table(get_id_index(frequencies), corpus.count())
     matrix = get_similarity_matrix(get_tfidf_table(idf_table))
     p2matrix = dict(matrix.collect())
 
-    similarityscores = test(filepath)
-    for term1 in similarityscores:
-        for term2 in similarityscores[term1]:
-            if abs(p2matrix[term1][term2] - similarityscores[term1]
-                    [term2]) > 0.0000001:
-                print(
-                    'TEST:{}:{}:{} not equal to MR:{}'.format(
-                        term1,
-                        term2,
-                        similarityscores[term1][term2],
-                        p2matrix[term1][term2]))
-        else:
-            print('TEST PASSED')
+    similarityscores = get_test_data(filepath, args)
+    with open('TEST_DATA.{}.{}.{}'.format(RESULT_FILE_NAME_ROOT, filename, datetime.isoformat(datetime.today())), 'w') as f:
+        for term1 in similarityscores:
+            for term2 in similarityscores[term1]:
+                if abs(p2matrix[term1][term2] - similarityscores[term1]
+                        [term2]) > 0.0000001:
+                    f.write(
+                        'TEST:{}:{}:{} not equal to MR:{}\n'.format(
+                            term1,
+                            term2,
+                            similarityscores[term1][term2],
+                            p2matrix[term1][term2]))
+            else:
+                f.write('TEST:{}:PASSED\n'.format(term1))

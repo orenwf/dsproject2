@@ -1,0 +1,1 @@
+{ time /usr/local/spark/bin/spark-submit --master spark://159.203.125.234:7077 --executor-memory 12G project2.py project2_test.txt --nofilter gene_egfr+_gene gene_epidermal_growth_factor_gene dis_gist_dis dis_cancer_dis --max 10 > /dev/null 2>&1 ; } 2> testnofilter.4

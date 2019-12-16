@@ -1,8 +1,9 @@
 import argparse
+from datetime import datetime
 import re
 from pprint import pformat
 from pyspark.sql import SparkSession
-from math import log, log10, sqrt
+from math import log, sqrt
 
 RESULT_FILE_NAME_ROOT = 'mapreduce.result'
 
@@ -63,7 +64,7 @@ def simrank(word, matrix):
 
 
 # maps the document corpus to an RDD that describes the term frequencies
-def get_frequencies(corpus, regex):
+def get_frequencies(corpus, regex, use_original_doc_len):
     table = corpus.map(lambda doc: (*doc, len(doc[1])))
     # filter only words that match the regex for the matrix
     if regex is not None:
@@ -71,7 +72,8 @@ def get_frequencies(corpus, regex):
             lambda doc: (
                 doc[0], [
                     word for word in doc[1] if regex.search(word)], doc[2]))
-    return table.map(lambda doc: (doc[0], terms2freq(doc[2], doc[1])))
+    return table.map(lambda doc: (doc[0], terms2freq(
+        doc[2] if use_original_doc_len else len(doc[1]), doc[1])))
 
 
 # returns an invserse index of word -> ((doc1, tf1), (doc2, tf2), ...)
@@ -112,7 +114,7 @@ def get_tfidf(corpus, regex):
     kwdocfreqs = dockwfreqs.flatMap(
         lambda x: [(word, (x[0], freq)) for word, freq in x[1]]).groupByKey()
     # get idfs
-    kwidfs = kwdocfreqs.map(lambda x: (x[0], log10(doccount/len(x[1])), x[1]))
+    kwidfs = kwdocfreqs.map(lambda x: (x[0], log(doccount/len(x[1])), x[1]))
     # get tfidfs
     return kwidfs.map(
         lambda x: (
@@ -141,21 +143,27 @@ def run_queries(terms, matrix, args):
 
 # will overwrite any existing output file
 def write_result_file(rdict, filename):
-    with open('{}.{}'.format(RESULT_FILE_NAME_ROOT, filename), 'w') as f:
-        f.write('CSCI 795 \t Big Data Seminar \t Oren Friedman \t Project 2\n')
+    with open('{}.{}.{}'.format(RESULT_FILE_NAME_ROOT, filename, datetime.isoformat(datetime.today())), 'w') as f:
+        f.write(
+            '{:<8}{:^64}{:<}\n'.format(
+                'CSCI 795',
+                'Big Data Seminar - Oren Friedman',
+                'Project 2'))
         f.write('{}\n'.format('='*128))
         for word, result in rdict.items():
             if not result:
                 f.write('No term similar to {} has been found.\n'.format(word))
             else:
-                f.write('FOUND\t{}\n'.format(word))
+                f.write('{:<8}{}\n'.format('FOUND', word))
                 f.write(
                     '{:<8}{:64}{:<}\n'.format(
                         'RANK',
                         'TERM',
                         'COSINE SIMILARITY'))
                 for rank, pair in enumerate(result[:args.max], start=1):
-                    f.write('{:<8}{:64}{:<}\n'.format(rank, pair[0], pair[1]))
+                    f.write(
+                        '{:<8}{:.<64}{:<}\n'.format(
+                            rank, pair[0], pair[1]))
             f.write('{}\n'.format('='*128))
         f.write('\n')
 
@@ -166,15 +174,11 @@ def parse_cli():
     parser.add_argument(
         'corpus', metavar='CORPUS', help='The file path of the corpus to use.')
     parser.add_argument(
-        'terms', metavar='TERM', nargs='+', help='Some terms to search for.')
+        'terms', metavar='TERM', nargs='*', help='Some terms to search for.')
     parser.add_argument(
         '--table',
         action='store_true',
         help='Dump the entire similarity score table.')
-    parser.add_argument(
-        '--test',
-        action='store_true',
-        help='Test the mapreduce operation against serial operation.')
     parser.add_argument(
         '--nofilter',
         action='store_true',
@@ -184,6 +188,10 @@ def parse_cli():
         type=str,
         default='.*dis_.*_dis.*|.*gene_.*_gene.*',
         help='Filter the terms that go into the similarity matrix.')
+    parser.add_argument(
+        '--original-doc-len',
+        action='store_true',
+        help='Preserve the original document lengths for TF calcs.')
     parser.add_argument(
         '--search',
         nargs=1,
@@ -209,7 +217,7 @@ if __name__ == '__main__':
     filepath = args.corpus
     filename = filepath.split('/')[-1]
     corpus = get_corpus(filepath)
-    frequencies = get_frequencies(corpus, regex)
+    frequencies = get_frequencies(corpus, regex, args.original_doc_len)
     id_index = get_id_index(frequencies)
     idf_table = get_idf_table(id_index, corpus.count())
     tfidf = get_tfidf_table(idf_table)

@@ -1,0 +1,4 @@
+D1 I like data science
+D2 I hate data
+D3 I want A
+D4 A data like B
