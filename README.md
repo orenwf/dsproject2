@@ -3,7 +3,7 @@
 ## Setup
 
 - assumes Ubuntu 18.04 LTS or newer
-- `cd` to unzipper source directory
+- `cd` to unzipped source directory
 - WARNING: THIS WILL DOWNLOAD AND INSTALL SPARK FROM APACHE AT `/usr/local/spark`
   - skip remainder of this setup if you have already set up spark
 - `chmod +x scripts/*`
