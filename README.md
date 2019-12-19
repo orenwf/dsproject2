@@ -24,6 +24,6 @@
 
 ## Running Tests
 
-- `$(SPARK_HOME)/bin/spark-submit similarityscoretests.py` name-of-input-file term1 term2
+- `usr/local/bin/spark-submit similarityscoretests.py` name-of-input-file term1 term2
   - the same flags can be used to tests
 - this runs the script against a single threaded algorithm to check the output of spark is the same - avoid giving it large input
