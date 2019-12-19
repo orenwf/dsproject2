@@ -3,14 +3,14 @@
 ## Setup
 
 - assumes Ubuntu 18.04 LTS or newer
-- `cd dsproject2`
+- `cd` to unzipper source directory
+- WARNING: THIS WILL DOWNLOAD AND INSTALL SPARK FROM APACHE AT `/usr/local/spark`
+  - skip remainder of this setup if you have already set up spark
 - `chmod +x scripts/*`
 - setup current machine as master: `./scripts/setup_spark.sh`
-- WARNING: THIS WILL DOWNLOAD AND INSTALL SPARK FROM APACHE AT `/usr/local/spark`
-  - skip this if you have already set up spark
 - For any workers to be set up:
   - must have master ssh key authorized
-  - `./scripts/setup_worker.sh` $(worker IP address)
+  - `./scripts/setup_worker.sh` worker-IP-address
 
 ## Running Jobs
 
