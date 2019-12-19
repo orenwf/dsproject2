@@ -1,8 +1,8 @@
 import argparse
-from datetime import datetime
+from time import time
 import re
 from pprint import pformat
-from pyspark.sql import SparkSession
+from pyspark import SparkContext
 from math import log, sqrt
 
 RESULT_FILE_NAME_ROOT = 'mapreduce.result'
@@ -11,9 +11,9 @@ RESULT_FILE_NAME_ROOT = 'mapreduce.result'
 
 
 def get_corpus(path):
-    spark = SparkSession.builder.getOrCreate()
+    spark = SparkContext.getOrCreate()
     with open(path, 'r') as f:
-        rawcorpus = spark.sparkContext.parallelize(f.readlines())
+        rawcorpus = spark.parallelize(f.readlines())
         corpus = rawcorpus.map(
             lambda toStrip: toStrip.strip()).map(
             lambda toSplit: toSplit.split()).map(
@@ -118,7 +118,7 @@ def run_queries(terms, matrix, args):
 
 # will overwrite any existing output file
 def write_result_file(rdict, filename):
-    with open('{}.{}.{}'.format(RESULT_FILE_NAME_ROOT, filename, datetime.isoformat(datetime.today())), 'w') as f:
+    with open('{}.{}.{}'.format(RESULT_FILE_NAME_ROOT, filename, int(time()) % 10000), 'w') as f:
         f.write(
             '{:<8}{:^64}{:<}\n'.format(
                 'CSCI 795',
